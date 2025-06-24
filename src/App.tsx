@@ -3,84 +3,79 @@ import { useState } from "react";
 
 export default function App() {
   const [count, setCount] = useState(0);
-  const [digits, setDigits] = useState<number[]>([0]);
+  const [digit, setDigit] = useState([0]);
   const [isNegative, setIsNegative] = useState(false);
-
-  const updateDigit = (newCompte: number) => {
-    const newDigit = Math.abs(newCompte)
+  const updateDigit = (newCount: number) => {
+    const newValue = Math.abs(newCount)
       .toString()
       .split("")
-      .reverse()
-      .map(Number);
-    setDigits(newDigit);
-    setIsNegative(newCompte < 0);
+      .map(Number)
+      .reverse();
+    setDigit(newValue);
+    setIsNegative(newCount < 0);
   };
-
   const incremente = () => {
-    const newCompte = count + 1;
+    const newCount = count + 1;
     setCount(count + 1);
-    updateDigit(newCompte);
+    updateDigit(newCount);
   };
   const decremente = () => {
-    const newCompte = count - 1;
+    const newCount = count - 1;
     setCount(count - 1);
-    updateDigit(newCompte);
+    updateDigit(newCount);
   };
-
   return (
-    <div className="w-screen h-screen flex justify-center items-center">
-      <div className="flex gap-4 items-center justify-center">
-        <Button onClick={decremente} label="Decremente" />
+    <div className="w-screen h-screen bg-neutral-900 flex justify-center items-center overflow-hidden">
+      <motion.div className="flex gap-4">
+        <Button label="Decremente" onClick={decremente} />
         <AnimatePresence>
           {isNegative && (
-            <p className="text-6xl h-14 text-pink-500 font-extrabold">-</p>
+            <motion.p
+              initial={{ x: -20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -20, opacity: 0 }}
+              className="text-5xl h-14 font-extrabold text-pink-500"
+            >
+              -
+            </motion.p>
           )}
         </AnimatePresence>
-        <div className="flex flex-row-reverse">
-          {digits.map((value, i) => (
-            <TabDigit key={i} digit={value} />
+        <section className="flex flex-row-reverse">
+          {digit.map((item, i) => (
+            <Counter digit={item} key={i} />
           ))}
-        </div>
-        <Button onClick={incremente} label="Incremente" />
-      </div>
+        </section>
+        <Button label="Incremente" onClick={incremente} />
+      </motion.div>
     </div>
   );
 }
 
-function Button({
-  label,
-  onClick,
-}: {
-  label: "Incremente" | "Decremente";
-  onClick: () => void;
-}) {
+function Button({ onClick, label }: { onClick: () => void; label: string }) {
   return (
     <button
       onClick={onClick}
-      className="bg-black flex-none h-fit rounded-md text-pink-500  text-xs p-2 font-bold cursor-pointer active:scale-95 transition-all will-change-transform"
+      className="p-2 bg-black text-xs font-bold text-pink-500 rounded-md cursor-pointer active:scale-95 transition-all will-change-transform"
     >
       {label}
     </button>
   );
 }
 
-function TabDigit({ digit }: { digit: number }) {
+function Counter({ digit }: { digit: number }) {
   return (
-    <motion.div
-      initial={{ x: 10, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      className="h-14 w-12 border-2 relative"
-    >
-      <motion.div
-        animate={{ y: `-${digit * 3.5}rem` }}
-        className="flex left-1/2 -translate-x-[50%] justify-center flex-col absolute"
-      >
-        {Array.from({ length: 10 }).map((_, n) => (
-          <p key={n} className="text-6xl h-14 text-pink-500 font-extrabold">
-            {n}
-          </p>
+    <div className="flex flex-col items-center h-14 w-8 relative overflow-hidden">
+      <div className="absolute left-1/2 -translate-x-[50%]">
+        {Array.from({ length: 10 }).map((_, i) => (
+          <motion.p
+            key={i}
+            animate={{ y: `-${digit * 3.5}rem` }}
+            className="text-5xl h-14 font-extrabold text-pink-500"
+          >
+            {i}
+          </motion.p>
         ))}
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }
