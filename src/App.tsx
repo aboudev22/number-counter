@@ -70,6 +70,7 @@ function Counter({ digit }: { digit: number }) {
           <motion.p
             key={i}
             animate={{ y: `-${digit * 3.5}rem` }}
+            transition={{ duration: 0.5 }}
             className="text-5xl h-14 font-extrabold text-pink-500"
           >
             {i}
